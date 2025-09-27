@@ -3,7 +3,7 @@
 ### till now
 
 [+] board representation : 2D matrix
-[+] pseudo/legal move generation : only for pawn
+[+] pseudo/legal move generation : completed for white
 
 ### todo
 

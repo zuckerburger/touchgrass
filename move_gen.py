@@ -1,13 +1,4 @@
-from pieces import pawn_moves
-from board import WKING, BKING, WPAWN, EMPTY
-
-def getPseudoLegalMoves(board, x, y):
-	piece = board[x][y]
-	if piece == EMPTY:
-		return []
-	if abs(piece) == WPAWN:
-		return pawn_moves(board, x, y, piece)
-	return []
+from pieces import getPseudoLegalMoves
 
 
 def isSquareAttacked(board, x, y, by_white):
