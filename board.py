@@ -32,7 +32,7 @@ class Board:
 		self.board[fx][fy] = EMPTY
 
 		if piece == WKING:
-			self.whking_pos = (tx, ty)
+			self.wking_pos = (tx, ty)
 		elif piece == BKING:
 			self.bking_pos = (tx, ty)
 

@@ -3,14 +3,19 @@
 ### till now
 
 [+] board representation : 2D matrix
+
 [+] pseudo/legal move generation : completed for white
 
 ### todo
 
 [-] logic for more pieces
+
 [-] shift to 1d array -> then bitmaps
+
 [-] rewrite in C
+
 [-] implement castling and en passant
+
 
 ### note
 

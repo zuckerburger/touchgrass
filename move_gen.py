@@ -15,7 +15,7 @@ def isSquareAttacked(board, x, y, by_white):
 			for nx, ny in getPseudoLegalMoves(board.board, i, j):
 				if nx == x and ny == y:
 					return True
-		return False
+	return False
 
 def getLegalMoves(board, color):
 	moves = []
@@ -35,7 +35,7 @@ def getLegalMoves(board, color):
 				captured = board.apply_move(move)
 
 				king_pos = board.wking_pos if color == 'white' else board.bking_pos
-				if not isSquareAttacked(board, *king_pos, by_white=(color == ' black')):
+				if not isSquareAttacked(board, *king_pos, by_white=(color == 'black')):
 					moves.append(move)
 				board.undo_move(move, captured)
 
