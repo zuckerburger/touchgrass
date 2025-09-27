@@ -1,22 +1,7 @@
 # touchgrass
 
-### till now
+tiny chess engine
 
-[+] board representation : 2D matrix
+only backend implemented till now
 
-[+] pseudo/legal move generation : completed for white
-
-### todo
-
-[-] logic for more pieces
-
-[-] shift to 1d array -> then bitmaps
-
-[-] rewrite in C
-
-[-] implement castling and en passant
-
-
-### note
-
-[!] only the backend is partially done, not algorithm has been implemented till now
+too hard ffs

@@ -1,54 +1,24 @@
-# from board import Board
-# from move_gen import getLegalMoves
-from game import Game
+from api import API
+from utils import print_board
 
-def move_coord(square):
-	return (8 - int(square[1]), ord(square[0].lower()) - ord('a'))
 
-def printBoard(board):
-	for row in board.board:
-		print(' '.join(f'{p:2}' for p in row))
-	print()
+def coord(square):
+    file = ord(square[0].lower()) - ord("a")
+    rank = 8 - int(square[1])
+    return (rank, file)
+
 
 def main():
-	'''
-	p = Board()
-	turn = 'white'
-	printBoard(p.board)
+    game = API()
 
-	moves = getLegalMoves(p, turn)
+    while not game.get_state()["over"]:
+        print_board(game.get_state()["board"])
+        move_str = input(f"{game.get_state()['turn']}'s move: ")
+        move = (coord(move_str[:2]), coord(move_str[2:]))
+        game.play(move)
 
-	print(f"{turn} has {len(moves)} legal moves:")
-	for m in moves:
-		print(m)
-	'''
-
-	g = Game()
-	printBoard(g.board)
-
-	while True:
-		moves = g.legal_moves()
-		if not moves:
-			print(f"no legal moves for {g.turn}. GAME OVER.")
-			break
-
-		if g.turn == 'white':
-			# print(moves)
-			the_move = input('move: ').strip().split()
-			source, destination = the_move
-			move = (move_coord(source), move_coord(destination))
-			if move not in moves:
-				print('illegal')
-				continue
-			g.make_move(move)
-			print(f"white plays: {move}")
-
-		else:
-			move = g.play_random()
-			print(f"black plays: {move}")
-
-		printBoard(g.board)
+    print("Game Over:", game.get_state()["result"])
 
 
-
-main()
+if __name__ == "__main__":
+    main()
