@@ -6,7 +6,7 @@ from .board import BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING
 
 def isSquareAttacked(board, x, y, by_white):
     # pawns
-    direction = -1 if by_white else 1
+    direction = 1 if by_white else -1
     for dy in [-1, 1]:
         nx, ny = x + direction, y + dy
         if in_bounds(nx, ny) and board.board[nx][ny] == (WPAWN if by_white else BPAWN):
@@ -86,11 +86,12 @@ def getLegalMoves(board, color):
 
             for nx, ny in getPseudoLegalMoves(board.board, x, y):
                 move = ((x, y), (nx, ny))
-                captured = board.apply_move(move)
+                record = board.apply_move(move)
 
                 king_pos = board.wking_pos if color == "white" else board.bking_pos
                 if not isSquareAttacked(board, *king_pos, by_white=(color == "black")):
                     moves.append(move)
-                board.undo_move(move, captured)
+
+                board.undo_move(move, record)
 
     return moves

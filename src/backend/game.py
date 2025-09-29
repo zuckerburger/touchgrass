@@ -11,6 +11,8 @@ class Game:
         self.game_over = False
         self.result = None
 
+        self.history = []
+
     def is_check(self, color):
         king_pos = self.board.wking_pos if color == "white" else self.board.bking_pos
         return isSquareAttacked(self.board, *king_pos, by_white=(color == "black"))
@@ -35,16 +37,19 @@ class Game:
             print("> illegal move\n")
             return None
 
-        captured = self.board.apply_move(move)
+        record = self.board.apply_move(move)
+        self.history.append(record)
 
-        self.turn = "black" if self.turn == "white" else "white"
+        # self.turn = "black" if self.turn == "white" else "white"
 
         state = self.get_gamestate()
         if state != "ongoing":
             self.game_over = True
             self.result = state
+        else:
+            self.turn = "black" if self.turn == "white" else "white"
 
-        return captured
+        return record
 
     def play_random(self):
         moves = self.legal_moves()
@@ -56,3 +61,15 @@ class Game:
 
         self.make_move(move)
         return move
+
+    def undo_last(self):
+        if not self.history:
+            return
+        last_move = self.history.pop()
+
+        move = (last_move.from_sq, last_move.to_sq)
+        self.board.undo_move(move, last_move)
+
+        self.turn = "black" if self.turn == "white" else "white"
+        self.game_over = False
+        self.result = None

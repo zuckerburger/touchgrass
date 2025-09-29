@@ -1,3 +1,16 @@
+from dataclasses import dataclass
+from typing import Optional, Tuple
+
+
+@dataclass
+class MoveRecord:
+    moved_piece: int
+    captured_piece: int
+    promotion: Optional[int] = None
+    from_sq: Tuple[int, int] = (0, 0)
+    to_sq: Tuple[int, int] = (0, 0)
+
+
 EMPTY = 0
 WPAWN, WKNIGHT, WBISHOP, WROOK, WQUEEN, WKING = 1, 2, 3, 4, 5, 6
 BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING = -1, -2, -3, -4, -5, -6
@@ -24,28 +37,42 @@ class Board:
     def apply_move(self, move):
         (fx, fy), (tx, ty) = move
 
-        piece = self.board[fx][fy]
+        original_piece = self.board[fx][fy]
 
         captured = self.board[tx][ty]
 
-        self.board[tx][ty] = piece
+        self.board[tx][ty] = original_piece
         self.board[fx][fy] = EMPTY
 
-        if piece == WKING:
+        if original_piece == WKING:
             self.wking_pos = (tx, ty)
-        elif piece == BKING:
+        elif original_piece == BKING:
             self.bking_pos = (tx, ty)
 
-        return captured
+        promotion = None
+        if original_piece == WPAWN and tx == 0:
+            promotion = WQUEEN
+            self.board[tx][ty] = WQUEEN
+        elif original_piece == BPAWN and tx == 7:
+            promotion = BQUEEN
+            self.board[tx][ty] = BQUEEN
 
-    def undo_move(self, move, captured):
+        return MoveRecord(
+            moved_piece=original_piece,
+            captured_piece=captured,
+            promotion=promotion,
+            from_sq=(fx, fy),
+            to_sq=(tx, ty),
+        )
+
+    def undo_move(self, move, move_record):
         (fx, fy), (tx, ty) = move
-        piece = self.board[tx][ty]
+        # piece = self.board[tx][ty]
 
-        self.board[fx][fy] = piece
-        self.board[tx][ty] = captured
+        self.board[fx][fy] = move_record.moved_piece
+        self.board[tx][ty] = move_record.captured_piece
 
-        if piece == WKING:
+        if move_record.moved_piece == WKING:
             self.wking_pos = (fx, fy)
-        elif piece == BKING:
+        elif move_record.moved_piece == BKING:
             self.bking_pos = (fx, fy)

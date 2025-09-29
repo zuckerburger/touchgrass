@@ -1,5 +1,3 @@
-# warning: clanker slop
-
 piece_map = {
     0: ".",
     1: "P",
@@ -23,3 +21,16 @@ def print_board(board):
         rank = 8 - i
         print(f"{rank}  " + " ".join(piece_map[p] for p in row) + f"  {rank}")
     print("   a b c d e f g h\n")
+
+
+def coords_to_uci(move):
+    (fx, fy), (tx, ty) = move
+    return f"{'abcdefgh'[fy]}{8-fx}{'abcdefgh'[ty]}{8-tx}"
+
+
+def uci_to_coords(s):
+    fy = "abcdefgh".index(s[0])
+    fx = 8 - int(s[1])
+    ty = "abcdefgh".index(s[2])
+    tx = 8 - int(s[3])
+    return ((fx, fy), (tx, ty))

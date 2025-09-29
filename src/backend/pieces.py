@@ -1,6 +1,7 @@
 from .board import WPAWN, WKNIGHT, WBISHOP, WROOK, WQUEEN, WKING
 from .board import EMPTY
-from .board import BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING
+
+# from .board import BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING
 
 
 def in_bounds(x, y):
@@ -25,8 +26,6 @@ def pawn_moves(board, x, y, piece):
         nx, ny = x + direction, y + dy
 
         if in_bounds(nx, ny) and board[nx][ny] != EMPTY and board[nx][ny] * piece < 0:
-            if abs(board[nx][ny]) == WKING:
-                continue
             moves.append((nx, ny))
 
     return moves
@@ -45,8 +44,6 @@ def knight_moves(board, x, y, piece):
         nx, ny = x + dx, y + dy
 
         if in_bounds(nx, ny) and (board[nx][ny] == EMPTY or board[nx][ny] * piece < 0):
-            if abs(board[nx][ny]) == WKING:
-                continue
             moves.append((nx, ny))
 
     return moves
@@ -60,8 +57,6 @@ def sliding_moves(board, x, y, piece, directions):
             if board[nx][ny] == EMPTY:
                 moves.append((nx, ny))
             elif board[nx][ny] * piece < 0:
-                if abs(board[nx][ny]) == WKING:
-                    continue
                 moves.append((nx, ny))
                 break
             else:
@@ -96,8 +91,6 @@ def king_moves(board, x, y, piece):
             if in_bounds(nx, ny) and (
                 board[nx][ny] == EMPTY or board[nx][ny] * piece < 0
             ):
-                if abs(board[nx][ny]) == WKING:
-                    continue
                 moves.append((nx, ny))
     return moves
 
