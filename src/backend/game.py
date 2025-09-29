@@ -1,5 +1,5 @@
 from .board import Board
-import random
+# import random
 from .move_gen import getLegalMoves, isSquareAttacked
 
 
@@ -50,17 +50,6 @@ class Game:
             self.turn = "black" if self.turn == "white" else "white"
 
         return record
-
-    def play_random(self):
-        moves = self.legal_moves()
-
-        if not moves:
-            return None
-
-        move = random.choice(moves)
-
-        self.make_move(move)
-        return move
 
     def undo_last(self):
         if not self.history:

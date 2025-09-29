@@ -1,40 +1,52 @@
+# from src.engine.minmax import MinimaxEngine
+from src.engine.dumbo import DumboEngine
 from src.backend.api import API
-import random
+from src.utils import print_board, clear_screen, coords_to_uci
 
 api = API()
+engine = DumboEngine(api)
+move_number = 1
 
-state = api.get_state()
-print(state["board"])  # 8x8 int matrix of pieces
-print(state["turn"])  # "white" or "black"
-print(state["over"])  # True/False
-print(state["result"])  # e.g. "checkmate_white", "stalemate", or None
+last_engine_move = None
 
-# get the list of legal moves in ((fx, fy), (tx, ty)) form
-moves = api.get_legal_moves()
-
-# apply move (returns MoveRecord)
-record = api.apply_move(moves[0])
-
-# undo move
-api.undo_move(moves[0], record)
-
-# make a move (validated)
-# uses internal validation and updates turn/history
-record = api.make_move(moves[0])
-if record is None:
-    print("illegal move")
-
-
-# get current board
-board = api.get_board()
-
-api = API()
 while not api.get_state()["over"]:
-    print(api.get_board())
-    moves = api.get_legal_moves()
-    if api.get_state()["turn"] == "white":
-        idx = int(input(f"Choose move [0-{len(moves)-1}]: "))
-        api.make_move(moves[idx])
+    state = api.get_state()
+
+    clear_screen()
+    print(f"\nMove {move_number} - {state['turn'].upper()}'s turn")
+    print_board(state["board"])
+    if last_engine_move:
+        print(f"Last Engine Move: {last_engine_move}")
+
+    if state["turn"] == "white":
+        moves = api.get_legal_moves()
+        for idx, move in enumerate(moves):
+            print(f"{idx}: {coords_to_uci(move)}", end="  ")
+        print()
+        while True:
+            try:
+                choice = int(input(f"Choose move [0-{len(moves)-1}]: "))
+                if 0 <= choice < len(moves):
+                    api.make_move(moves[choice])
+                    break
+                print("Invalid choice, try again.")
+            except ValueError:
+                print("Invalid input, enter a number.")
     else:
-        move = random.choice(moves)
-        api.make_move(move)
+        print("Engine Thinking...", end="", flush=True)
+        move = engine.get_best_move()
+        if move:
+            api.make_move(move)
+            # print(f"\rEngine plays: {coords_to_uci(move)}")
+            last_engine_move = coords_to_uci(move)
+        else:
+            print("Engine has no Legal Moves!")
+            break
+
+    move_number += 1
+
+clear_screen()
+state = api.get_state()
+print("\nGAME OVER")
+print_board(state["board"])
+print(f"Result: {state['result']}")
