@@ -1,0 +1,7 @@
+[project]
+name = "touchgrass"
+version = "0.1.0"
+description = "a tiny chess engine playground"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []

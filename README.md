@@ -4,19 +4,47 @@
 
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 
-a tiny, unoptimized chess engine playground made for fun, to learn and as an excuse to not venture out of my room.
+a tiny hackable chess engine playground to start tinkering with [chess programming](https://chessprogramming.org).
 
-the `backend` and `engine` are separate so you can plug in custom engines without reconfiguring.
-this isn't optimized, it's for exploration.
+the aim of this project is to act as a lightweight and easy to set up sandbox, and allow others to tinker with chess programming without heavy dependencies.
+
+the code has been kept intentionally verbose to facilitate learning.
+
+if you wish to contribute in any way, take a look at the [TODOs](#todo).
+
+## **installation**
+
+1. clone the repository
+
+```bash
+git clone https://github.com/datavorous/touchgrass.git
+cd touchgrass
+```
+
+2. install dependencies
+
+```bash
+pip install uvicorn
+```
+
+3. run the sandbox
+
+```bash
+uv run main.py
+```
+
+4. start experimenting
+
+the backend and engines are modular, so you can **plug in custom algorithms** to play chess against, without touching the core logic.
 
 ## exposed backend api
 
-the backend is the foundation for everything else. it enforces the rules of chess and provides legal moves and the current board state. it also supports applying and undoing moves.
+it is the foundation for everything else. it enforces the rules of chess and provides legal moves and the current board state. it also supports applying and undoing moves.
 
 it does the following: manages the game board matrix, shows legal moves, makes a new move, undoes previous moves, enforces rules for moving and capturing pieces, handles checkmates and stalemates, and also promotions.
 
 > [!WARNING]
-> en passant, castling, 50-move rule, etc. have not been implemented, and will never be (probably).
+> en passant, castling, 50-move rule, etc. have not been implemented.
 
 ## what the api gives you
 
@@ -172,7 +200,7 @@ class MinimaxEngine(BaseEngine):
 
 key pattern: `apply_move()` -> evaluate -> `undo_move()` lets you explore without mutating state permanently.
 
-## this works, trust me
+## this is how it works
 
 1. you don't deal with piece rules, checks, or move generation
 2. four api calls cover everything
@@ -193,7 +221,31 @@ the game loop calls `engine.get_best_move()` when it's black's turn. that's it.
 
 ## TODO
 
-WRITE A BETTER ENGINE WITH ATLEAST ~800 ELO
+### core
+
+Fork, make a HUMAN GENERATED commit, push changes, make a PR:
+
+[ ] move generation : add support for en passant, castling and other rules.
+
+[ ] add detection for check/checkmate/stalement by insufficient material.
+
+[ ] replacing 8x8 array with bitmaps.
+
+[ ] optimizing move undo/apply logic to ensure only the changes are propagated.
+
+[ ] add caching for pseudo legal moves of each piece.
+
+[ ] store moves in a stack with complete state for undo/redo.
+
+[ ] add UCI support, apart from a terminal ui
+
+### ai
+
+wip.
+
+
+
+
 
 
 
