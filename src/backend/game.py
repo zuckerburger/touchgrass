@@ -1,6 +1,7 @@
 from .board import Board
 # import random
 from .move_gen import getLegalMoves, isSquareAttacked
+from .move_gen import canCastle
 
 
 class Game:
@@ -30,7 +31,7 @@ class Game:
             return "stalemate"
 
     def legal_moves(self):
-        return getLegalMoves(self.board, self.turn)
+        return getLegalMoves(self.board, self.turn, self.history)
 
     def make_move(self, move):
         if move not in self.legal_moves():
