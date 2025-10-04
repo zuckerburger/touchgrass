@@ -49,18 +49,18 @@ class Board:
         elif original_piece == BKING:
             self.bking_pos = (tx, ty)
 
-         # HANDLE CASTLING
+        # HANDLE CASTLING
         # CHECK IF KING MADE A 2SQR MOVE
         if abs(original_piece) == WKING and abs(fy - ty) == 2:
             # SHORT
-            if ty == 6: 
+            if ty == 6:
                 rook = self.board[fx][7]
-                self.board[fx][5] = rook # move rook
-                self.board[fx][7] = EMPTY#empty the sqr
+                self.board[fx][5] = rook  # move rook
+                self.board[fx][7] = EMPTY  # empty the sqr
             # LONG
             elif ty == 2:
                 rook = self.board[fx][0]
-                self.board[fx][3] = rook # move rook
+                self.board[fx][3] = rook  # move rook
                 self.board[fx][0] = EMPTY
 
         promotion = None
@@ -95,10 +95,10 @@ class Board:
             # SHORT
             if ty == 6:
                 rook = self.board[fx][5]
-                self.board[fx][7] = rook # undo rook
+                self.board[fx][7] = rook  # undo rook
                 self.board[fx][5] = EMPTY
             # LONG
             elif ty == 2:
                 rook = self.board[fx][3]
-                self.board[fx][0] = rook # nudo rook
+                self.board[fx][0] = rook  # nudo rook
                 self.board[fx][3] = EMPTY
