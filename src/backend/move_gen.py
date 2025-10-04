@@ -73,35 +73,52 @@ def isSquareAttacked(board, x, y, by_white):
 
 
 def canCastle(board, color, side, history):
-    row=7 if color=="white" else 0
-    king=WKING if color=="white" else BKING
-    
-    if side=="SHORT":
-        castle_rook=WROOK if color=="white" else BROOK
-        
-        #CHECK LINE OF SIGHT                         || NOT CHECK ||           ROOK PRESENT AT SHORT SIDE(H1//H8)    ||     KING AT HOME
-        if board.board[row][5]==0 and board.board[row][6]==0 and isSquareAttacked(board, row, 4, by_white=(color == "black"))==False and board.board[row][7]==4 and board.board[row][4]==6:
-            #HISTORY CHECK
+    row = 7 if color == "white" else 0
+    king = WKING if color == "white" else BKING
+    castle_rook = WROOK if color == "white" else BROOK
+    by_white = color == "black"
+
+    #  (SHORT)
+    if side == "SHORT":
+        # LOS CHECK AND Verigying if King and rook are at home positions
+        if (
+            board.board[row][5] == 0 and
+            board.board[row][6] == 0 and
+            board.board[row][7] == castle_rook and
+            board.board[row][4] == king and
+            all(not isSquareAttacked(board, row, col, by_white=by_white)
+                for col in [4, 5, 6])
+        ):
+            # History check if any of them has moved in the past
             for move in history:
-                if move.moved_piece==king:
+                if move.moved_piece == king:
                     return False
-                elif move.moved_piece==castle_rook and move.from_sq==(row,7):
+                elif move.moved_piece == castle_rook and move.from_sq == (row, 7):
                     return False
-        return True
-            
-    
-    elif side=="LONG":
-        castle_rook=WROOK if color=="white" else BROOK
-        
-        #                  CHECK LINE OF SIGHT                              || NOT CHECK ||           ROOK PRESENT AT LONG SIDE(A1//A8)    ||     KING AT HOME
-        if board.board[row][1]==0 and board.board[row][2]==0 and board.board[row][3]==0 and isSquareAttacked(board, row, 4, by_white=(color == "black"))==False and board.board[row][0]==4 and board.board[row][4]==6:
-            #HISTORY CHECK
+            return True
+        return False
+
+    #  (LONG)
+    elif side == "LONG":
+        # LOS CHECK AND Verigying if King and rook are at home positions
+        if (
+            board.board[row][1] == 0 and
+            board.board[row][2] == 0 and
+            board.board[row][3] == 0 and
+            board.board[row][0] == castle_rook and
+            board.board[row][4] == king and
+            all(not isSquareAttacked(board, row, col, by_white=by_white)
+                for col in [4, 3, 2])
+        ):
+            # History check if any of them has moved in the past
             for move in history:
-                if move.moved_piece==king:
+                if move.moved_piece == king:
                     return False
-                elif move.moved_piece==castle_rook and move.from_sq==(row,0):
+                elif move.moved_piece == castle_rook and move.from_sq == (row, 0):
                     return False
-        return True
+            return True
+        return False
+
     return False
     
             
@@ -135,13 +152,20 @@ def getLegalMoves(board, color,history):
     row = 7 if color == "white" else 0
     king_start = (row, 4)
 
-    # Kingside (SHORT) castling
+    # (SHORT) castling
     if canCastle(board, color, "SHORT", history):
-        # King moves two squares right: e1 to g1 (white), e8 to g8 (black)
+        rook_start=(row, 7)
+        # King moves
         moves.append((king_start, (row, 6)))
-    # Queenside (LONG) castling
+
+        
+
+        
+    # (LONG) castling
     if canCastle(board, color, "LONG", history):
-        # King moves two squares left: e1 to c1 (white), e8 to c8 (black)
+        rook_start=(row, 0)
+        # King moves
         moves.append((king_start, (row, 2)))
+
 
     return moves
