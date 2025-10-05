@@ -9,7 +9,7 @@ class MoveRecord:
     promotion: Optional[int] = None
     from_sq: Tuple[int, int] = (0, 0)
     to_sq: Tuple[int, int] = (0, 0)
-    en_passant: bool = False 
+    en_passant: bool = False
 
 
 EMPTY = 0
@@ -51,7 +51,7 @@ class Board:
             self.wking_pos = (tx, ty)
         elif original_piece == BKING:
             self.bking_pos = (tx, ty)
-        
+
         # HANDLE EN PASSANT
         elif captured == EMPTY and abs(original_piece) == WPAWN:
             if fy != ty:
@@ -86,7 +86,7 @@ class Board:
             promotion=promotion,
             from_sq=(fx, fy),
             to_sq=(tx, ty),
-            en_passant=en_passant
+            en_passant=en_passant,
         )
 
     def undo_move(self, move, move_record):
@@ -115,6 +115,6 @@ class Board:
 
         # ENPASSANT UNDO
         elif move_record.en_passant:
-            self.board[tx][ty] = EMPTY;
-            self.board[tx + abs(move_record.moved_piece)][ty] = move_record.captured_piece;
-                        
+            self.board[tx][ty] = EMPTY
+            rank = tx + abs(move_record.moved_piece)
+            self.board[rank][ty] = move_record.captured_piece
