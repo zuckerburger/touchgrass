@@ -165,6 +165,7 @@ def getLegalMoves(board, color, history):
 
             for nx, ny in getPseudoLegalMoves(board.board, x, y):
                 move = ((x, y), (nx, ny))
+                 
                 record = board.apply_move(move)
 
                 king_pos = board.wking_pos if color == "white" else board.bking_pos
@@ -172,6 +173,17 @@ def getLegalMoves(board, color, history):
                     moves.append(move)
 
                 board.undo_move(move, record)
+
+    # EN PASSANT LOGIC
+    
+    for move in getEnPassantMoves(board, color, history):
+        record = board.apply_move(move)
+
+        king_pos = board.wking_pos if color == "white" else board.bking_pos
+        if not isSquareAttacked(board, *king_pos, by_white=(color == "black")):
+            moves.append(move)
+
+        board.undo_move(move, record)
 
     # CASTLING LOGIC
 
