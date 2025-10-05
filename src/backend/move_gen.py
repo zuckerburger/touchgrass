@@ -71,6 +71,31 @@ def isSquareAttacked(board, x, y, by_white):
     return False
 
 
+def getEnPassantMoves(board, color, history): 
+    if not history:
+        return []
+
+    row = 4 if color == "white" else 3 
+    endingRow = row + 1 if color == "white" else row - 1
+    enemyPawnStart = 6 if color == "white" else 1  
+    enemyPawn = BPAWN if color == "white" else WPAWN
+    pawn = WPAWN if color == "white" else BPAWN
+    moves = []
+
+    # check last move was double pawn move
+    lastMove = history[-1]
+    if (
+        lastMove.moved_piece == enemyPawn 
+        and lastMove.to_sq[0] == row 
+        and lastMove.from_sq[0] == enemyPawnStart
+    ): 
+        # Get adjacent player pawns
+        cols = (lastMove.to_sq[1] - 1, lastMove.to_sq[1] + 1) 
+        for col in cols:
+            if in_bounds(row, col) and board.board[row][col] == pawn:
+                moves.append(((row, col), (endingRow, lastMove.to_sq[1])))
+    return moves
+
 def canCastle(board, color, side, history):
     row = 7 if color == "white" else 0
     king = WKING if color == "white" else BKING
