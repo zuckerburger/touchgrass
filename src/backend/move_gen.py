@@ -88,12 +88,13 @@ def getEnPassantMoves(board, color, history):
         lastMove.moved_piece == enemyPawn 
         and lastMove.to_sq[0] == row 
         and lastMove.from_sq[0] == enemyPawnStart
+        and board[endingRow][lastMove.to_sq[1]] == EMPTY 
     ): 
         # Get adjacent player pawns
         cols = (lastMove.to_sq[1] - 1, lastMove.to_sq[1] + 1) 
         for col in cols:
             if in_bounds(row, col) and board.board[row][col] == pawn:
-                moves.append(((row, col), (endingRow, lastMove.to_sq[1])))
+                moves.append(((row, col), [endingRow][lastMove.to_sq[1]] ))
     return moves
 
 def canCastle(board, color, side, history):
