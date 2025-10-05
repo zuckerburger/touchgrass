@@ -75,9 +75,9 @@ def getEnPassantMoves(board, color, history):
     if not history:
         return []
 
-    row = 4 if color == "white" else 3 
-    endingRow = row + 1 if color == "white" else row - 1
-    enemyPawnStart = 6 if color == "white" else 1  
+    row = 3 if color == "white" else 4 
+    endingRow = row - 1 if color == "white" else row + 1
+    enemyPawnStart = 1 if color == "white" else 6  
     enemyPawn = BPAWN if color == "white" else WPAWN
     pawn = WPAWN if color == "white" else BPAWN
     moves = []
@@ -93,8 +93,8 @@ def getEnPassantMoves(board, color, history):
         # Get adjacent player pawns
         cols = (lastMove.to_sq[1] - 1, lastMove.to_sq[1] + 1) 
         for col in cols:
-            if in_bounds(row, col) and board.board[row][col] == pawn:
-                moves.append(((row, col), [endingRow][lastMove.to_sq[1]] ))
+            if in_bounds(row, col) and board[row][col] == pawn:
+                moves.append(((row, col), (endingRow, lastMove.to_sq[1])))
     return moves
 
 def canCastle(board, color, side, history):
@@ -177,7 +177,7 @@ def getLegalMoves(board, color, history):
 
     # EN PASSANT LOGIC
     
-    for move in getEnPassantMoves(board, color, history):
+    for move in getEnPassantMoves(board.board, color, history):
         record = board.apply_move(move)
 
         king_pos = board.wking_pos if color == "white" else board.bking_pos
