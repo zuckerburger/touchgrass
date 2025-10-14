@@ -43,9 +43,6 @@ it is the foundation for everything else. it enforces the rules of chess and pro
 
 it does the following: manages the game board matrix, shows legal moves, makes a new move, undoes previous moves, enforces rules for moving and capturing pieces, handles checkmates and stalemates, and also promotions.
 
-> [!WARNING]
-> en passant, castling, 50-move rule, etc. have not been implemented.
-
 ## what the api gives you
 
 ### initialisation
