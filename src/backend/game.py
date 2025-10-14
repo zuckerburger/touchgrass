@@ -1,4 +1,6 @@
 from .board import Board
+from .board import WPAWN, WKNIGHT, WBISHOP, WROOK, WQUEEN, WKING
+from .board import BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING, EMPTY
 
 # import random
 from .move_gen import getLegalMoves, isSquareAttacked
@@ -14,13 +16,18 @@ class Game:
         self.result = None
 
         self.history = []
+        self.halfmove_clock = 0
 
     def is_check(self, color):
         king_pos = self.board.wking_pos if color == "white" else self.board.bking_pos
         return isSquareAttacked(self.board, *king_pos, by_white=(color == "black"))
 
+
     def get_gamestate(self):
         moves = self.legal_moves()
+
+        if self.halfmove_clock >= 100:
+            return "draw_fifty_move_rule"
 
         if moves:
             return "ongoing"
@@ -42,6 +49,11 @@ class Game:
         record = self.board.apply_move(move)
         self.history.append(record)
 
+        if record.moved_piece in [WPAWN, BPAWN] or record.captured_piece != EMPTY:
+            self.halfmove_clock = 0
+        else:
+            self.halfmove_clock += 1
+
         # self.turn = "black" if self.turn == "white" else "white"
 
         state = self.get_gamestate()
@@ -60,6 +72,11 @@ class Game:
 
         move = (last_move.from_sq, last_move.to_sq)
         self.board.undo_move(move, last_move)
+
+        if last_move.moved_piece in [WPAWN, BPAWN] or last_move.captured_piece != EMPTY:
+            self.halfmove_clock = max(0, self.halfmove_clock - 1)
+        else:
+            self.halfmove_clock = max(0, self.halfmove_clock - 1)
 
         self.turn = "black" if self.turn == "white" else "white"
         self.game_over = False
