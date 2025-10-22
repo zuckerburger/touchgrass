@@ -2,7 +2,13 @@ import random
 
 from typing import Tuple, List
 
-from backend.board import DEFAULT_CASTLING, EMPTY, WKING_LONG
+from .pieces import EMPTY
+
+WKING_LONG = 1 << 3
+WKING_SHORT = 1 << 2
+BKING_LONG = 1 << 1
+BKING_SHORT = 1 << 0
+DEFAULT_CASTLING = WKING_LONG | WKING_SHORT | BKING_LONG | BKING_SHORT
 
 NUM_SQUARES = 64
 NUM_PIECES = 12

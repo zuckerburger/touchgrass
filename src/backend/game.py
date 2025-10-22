@@ -1,6 +1,6 @@
 from .board import Board
-from .board import WPAWN, WKNIGHT, WBISHOP, WROOK, WQUEEN, WKING
-from .board import BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING, EMPTY
+from .pieces import WPAWN, WKNIGHT, WBISHOP, WROOK, WQUEEN, WKING
+from .pieces import BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING, EMPTY
 from dataclasses import dataclass
 from typing import List, Optional
 import copy

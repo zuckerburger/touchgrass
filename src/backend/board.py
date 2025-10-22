@@ -1,16 +1,9 @@
 from dataclasses import dataclass
 from typing import Optional, Tuple
-import zobrist
-
-WKING_LONG = 1 << 3
-WKING_SHORT = 1 << 2
-BKING_LONG = 1 << 1
-BKING_SHORT = 1 << 0
-DEFAULT_CASTLING = WKING_LONG | WKING_SHORT | BKING_LONG | BKING_SHORT
-
-EMPTY = 0
-WPAWN, WKNIGHT, WBISHOP, WROOK, WQUEEN, WKING = 1, 2, 3, 4, 5, 6
-BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING = -1, -2, -3, -4, -5, -6
+from .zobrist import hash_board, hash_piece, hash_move, hash_en_passant, hash_castle 
+from .zobrist import WKING_LONG, WKING_SHORT, BKING_LONG, BKING_SHORT, DEFAULT_CASTLING
+from .pieces import WPAWN, WKNIGHT, WBISHOP, WROOK, WQUEEN, WKING
+from .pieces import BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING, EMPTY
 
 
 @dataclass
@@ -32,7 +25,7 @@ class Board:
         self.bking_pos = (0, 4)
         self.castling_rights = DEFAULT_CASTLING
         self.en_passant_file = None
-        self.hash = zobrist.hash_board(self.board)
+        self.hash = hash_board(self.board)
 
     def starting_pos(self):
         return [
@@ -90,14 +83,14 @@ class Board:
                 rook = self.board[fx][cy]
                 self.board[fx][5] = rook  # move rook
                 self.board[fx][7] = EMPTY  # empty the sqr
-                self.hash = zobrist.hash_piece(self.hash, rook, (fx, 5))
+                self.hash = hash_piece(self.hash, rook, (fx, 5))
             # LONG
             elif ty == 2:
                 cy = 0
                 rook = self.board[fx][cy]
                 self.board[fx][3] = rook  # move rook
                 self.board[fx][cy] = EMPTY
-                self.hash = zobrist.hash_piece(self.hash, rook, (fx, 3))
+                self.hash = hash_piece(self.hash, rook, (fx, 3))
 
         promotion = None
         if original_piece == WPAWN and tx == 0:
@@ -151,7 +144,7 @@ class Board:
                 rook = self.board[fx][cy]
                 self.board[fx][7] = rook  # undo rook
                 self.board[fx][cy] = EMPTY
-                self.hash = zobrist.hash_piece(self.hash, rook, (fx, 7))
+                self.hash = hash_piece(self.hash, rook, (fx, 7))
 
             # LONG
             elif ty == 2:
@@ -159,7 +152,7 @@ class Board:
                 rook = self.board[fx][cy]
                 self.board[fx][0] = rook  # undo rook
                 self.board[fx][cy] = EMPTY
-                self.hash = zobrist.hash_piece(self.hash, rook, (fx, 0))
+                self.hash = hash_piece(self.hash, rook, (fx, 0))
 
         # ENPASSANT UNDO
         elif move_record.en_passant:
@@ -170,7 +163,7 @@ class Board:
         # RESTORE HASHES
         self.update_hashes(
             move_record.moved_piece,
-            move_record.move,
+            (move_record.from_sq, move_record.to_sq),
             move_record.captured_piece,
             (cx, cy),
             old_castling_rights,
@@ -186,10 +179,10 @@ class Board:
         old_castling_rights,
         old_en_passant_file,
     ):
-        self.hash = zobrist.hash_move(self.hash, moved_piece, move)
-        self.hash = zobrist.hash_piece(self.hash, captured_piece, captured_position)
-        self.hash = zobrist.hash_castle(
+        self.hash = hash_move(self.hash, moved_piece, move)
+        self.hash = hash_piece(self.hash, captured_piece, captured_position)
+        self.hash = hash_castle(
             self.hash, old_castling_rights, self.castling_rights
         )
-        self.hash = zobrist.hash_en_passant(self.hash, old_en_passant_file)
-        self.hash = zobrist.hash_en_passant(self.hash, self.en_passant_file)
+        self.hash = hash_en_passant(self.hash, old_en_passant_file)
+        self.hash = hash_en_passant(self.hash, self.en_passant_file)
