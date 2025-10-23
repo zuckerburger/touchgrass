@@ -31,7 +31,6 @@ def hash_board(board: List[List[int]]):
     return hash
 
 def hash_turn(hash):
-    print(f"hashing turn")
     return hash ^ zobrist_table["turn"]
 
 def hash_piece(hash: int, piece: int, position: Tuple[int, int]):
@@ -40,7 +39,6 @@ def hash_piece(hash: int, piece: int, position: Tuple[int, int]):
     piece = piece + 5 if piece > 0 else piece + 6
     fx, fy = position
     randomNum = zobrist_table["pieces"][piece][fx * 8 + fy]
-    #print(f"hashing piece {piece} at {(fx,fy)}")
     return hash ^ randomNum
 
 def hash_move(hash: int, piece: int, move: Tuple[Tuple[int, int], Tuple[int, int]]):
@@ -48,7 +46,6 @@ def hash_move(hash: int, piece: int, move: Tuple[Tuple[int, int], Tuple[int, int
     return hash ^ hash_piece(hash, piece, position1) ^ hash_piece(hash, piece, position2)
 
 def hash_castle(hash: int, old: int, new: int):
-#    print(f"hashing castle {old} to castle {new}")
     changed_rights = (old ^ new)
     if changed_rights == 0:
         return hash
@@ -59,5 +56,4 @@ def hash_castle(hash: int, old: int, new: int):
     return hash
 
 def hash_en_passant(hash: int, rank: int | None):
-    #print(f"hashing en passant on rank {rank}")
     return hash if rank == None else hash ^ zobrist_table["en-passant"][rank]

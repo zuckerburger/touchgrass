@@ -152,7 +152,6 @@ def canCastle(board, color, side, history):
 
 
 def getLegalMoves(board, color, history):
-    print(f"get legal moves for {color}, hash is {board.hash}")
     moves = []
 
     for x in range(8):
@@ -167,34 +166,22 @@ def getLegalMoves(board, color, history):
 
             for nx, ny in getPseudoLegalMoves(board.board, x, y):
                 move = ((x, y), (nx, ny))
-                before_hash = board.hash
-                print(f"hash is {board.hash}")
                 record = board.apply_move(move)
-                #print(f"hash after {move} is {board.hash}")
                 king_pos = board.wking_pos if color == "white" else board.bking_pos
                 if not isSquareAttacked(board, *king_pos, by_white=(color == "black")):
                     moves.append(move)
 
                 board.undo_move(move, record)
-               # print(f"move {move} undone, now {board.hash}")
-                if (before_hash != board.hash):
-                    print(f"uh oh! hash failed on move {move}")
 
     # EN PASSANT LOGIC
 
     for move in getEnPassantMoves(board.board, color, history):
-        before_hash = board.hash
-        print(f"hash is {board.hash}")
         record = board.apply_move(move)
-        #print(f"hash after {move} is {board.hash}")
         king_pos = board.wking_pos if color == "white" else board.bking_pos
         if not isSquareAttacked(board, *king_pos, by_white=(color == "black")):
             moves.append(move)
 
         board.undo_move(move, record)
-        #print(f"move {move} undone, now {board.hash}")
-        if (before_hash != board.hash):
-            print(f"uh oh! hash failed on move {move} en passant")
 
     # CASTLING LOGIC
 

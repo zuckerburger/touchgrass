@@ -40,8 +40,6 @@ class Game:
 
     def get_gamestate(self):
         moves = self.legal_moves()
-        print(f'self.hash_history is {self.hash_history}')
-        print(f'current hash is {self.board.hash}')
 
         if self.halfmove_clock >= 100:
             return "draw_fifty_move_rule"
