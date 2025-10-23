@@ -1,10 +1,11 @@
 # from src.engine.minmax import MinimaxEngine
+from src.engine.test import TestEngine
 from src.engine.dumbo import DumboEngine
 from src.backend.api import API
 from src.utils import print_board, clear_screen, coords_to_uci
 
 api = API()
-engine = DumboEngine(api)
+engine = TestEngine(api)
 move_number = 1
 
 last_engine_move = None
@@ -12,13 +13,28 @@ last_engine_move = None
 while not api.get_state()["over"]:
     state = api.get_state()
 
-    clear_screen()
+    #clear_screen()
     print(f"\nMove {move_number} - {state['turn'].upper()}'s turn")
     print_board(state["board"])
     if last_engine_move:
         print(f"Last Engine Move: {last_engine_move}")
 
     if state["turn"] == "white":
+        if state["result"] == "threefold_draw_claimable":
+            while True:
+                try:
+                    choice = input("Threefold repetition detected. Claim draw? (y/n)\n")
+                    if choice == 'y':
+                        api.claim_threefold_draw()
+                        break
+                    if choice == 'n':
+                        break
+                    print("Invalid choice, try again.")
+                except:
+                    print("Invalid input, enter a number.")
+
+        if api.get_state()["over"]:
+            break
         moves = api.get_legal_moves()
         for idx, move in enumerate(moves):
             print(f"{idx}: {coords_to_uci(move)}", end="  ")

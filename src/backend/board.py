@@ -1,9 +1,19 @@
 from dataclasses import dataclass
 from typing import Optional, Tuple
-from .zobrist import hash_board, hash_piece, hash_move, hash_en_passant, hash_castle 
+
+from .zobrist import (
+    hash_board,
+    hash_piece,
+    hash_move,
+    hash_en_passant,
+    hash_castle,
+    hash_turn,
+)
 from .zobrist import WKING_LONG, WKING_SHORT, BKING_LONG, BKING_SHORT, DEFAULT_CASTLING
-from .pieces import WPAWN, WKNIGHT, WBISHOP, WROOK, WQUEEN, WKING
-from .pieces import BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING, EMPTY
+
+EMPTY = 0
+WPAWN, WKNIGHT, WBISHOP, WROOK, WQUEEN, WKING = 1, 2, 3, 4, 5, 6
+BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING = -1, -2, -3, -4, -5, -6
 
 
 @dataclass
@@ -53,6 +63,7 @@ class Board:
         removed_castle_right = 0
         old_castling_rights = self.castling_rights
         old_en_passant_file = self.en_passant_file
+        self.en_passant_file = None
 
         if original_piece == WKING:
             self.wking_pos = (tx, ty)
@@ -65,8 +76,14 @@ class Board:
         elif original_piece == BROOK and fx == 0:
             removed_castle_right = BKING_LONG if fy == 0 else BKING_SHORT
 
+        # CHECK IF PSEUDO-LEGAL EN PASSANT CAPTURE EXISTS FOR NEXT TURN
         elif abs(original_piece) == WPAWN and abs(tx - fx) == 2:
-            self.en_passant_file = fy
+            if (
+                (ty <= 6 and self.board[tx][ty + 1] == -original_piece)
+                or (ty >= 1 and self.board[tx][ty - 1] == -original_piece)
+            ):
+                self.en_passant_file = fy
+
         # HANDLE EN PASSANT
         elif captured == EMPTY and abs(original_piece) == WPAWN:
             if fy != ty:
@@ -128,9 +145,12 @@ class Board:
 
         self.board[fx][fy] = move_record.moved_piece
         self.board[tx][ty] = move_record.captured_piece
+
         old_castling_rights = self.castling_rights
         old_en_passant_file = self.en_passant_file
+
         self.castling_rights = move_record.castling_rights
+        self.en_passant_file = move_record.en_passant_file
 
         if move_record.moved_piece == WKING:
             self.wking_pos = (fx, fy)
@@ -181,8 +201,7 @@ class Board:
     ):
         self.hash = hash_move(self.hash, moved_piece, move)
         self.hash = hash_piece(self.hash, captured_piece, captured_position)
-        self.hash = hash_castle(
-            self.hash, old_castling_rights, self.castling_rights
-        )
+        self.hash = hash_castle(self.hash, old_castling_rights, self.castling_rights)
         self.hash = hash_en_passant(self.hash, old_en_passant_file)
         self.hash = hash_en_passant(self.hash, self.en_passant_file)
+        self.hash = hash_turn(self.hash)

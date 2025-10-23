@@ -18,6 +18,9 @@ class API:
     def get_legal_moves(self):
         return self.g.legal_moves()
 
+    def claim_threefold_draw(self):
+        return self.g.claim_threefold_draw()
+
     def make_move(self, move):
         return self.g.make_move(move)
 
