@@ -35,6 +35,7 @@ class Board:
         self.board = self.starting_pos()
         self.wking_pos = (7, 4)
         self.bking_pos = (0, 4)
+
         self.castling_rights = DEFAULT_CASTLING
         self.en_passant_file = None
         self.hash = hash_board(self.board)
@@ -95,6 +96,18 @@ class Board:
                 captured = self.board[cx][cy]
                 self.board[cx][cy] = EMPTY
                 en_passant = True
+
+        # UPDATE CASTLING RIGHTS IF ROOK CAPTURED
+        if captured == WROOK and tx == 7:
+            if ty == 7:
+                removed_castle_right |= WKING_LONG
+            elif ty == 0:
+                removed_castle_right |= WKING_SHORT
+        elif captured == BROOK and tx == 0:
+            if ty == 7:
+                removed_castle_right |= BKING_LONG
+            elif ty == 0:
+                removed_castle_right |= BKING_SHORT
 
         # HANDLE CASTLING
         # CHECK IF KING MADE A 2SQR MOVE
