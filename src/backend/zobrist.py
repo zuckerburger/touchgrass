@@ -65,7 +65,7 @@ def hash_castle(hash: int, old: int, new: int):
     return hash
 
 
-def hash_en_passant(hash: int, rank: int | None):
+def hash_en_passant(hash: int, rank: Optional[int]):
     return hash if rank == None else hash ^ zobrist_table["en-passant"][rank]
 
 
