@@ -1,7 +1,7 @@
 from .pieces import getPseudoLegalMoves, in_bounds
 from .board import WPAWN, WKNIGHT, WBISHOP, WROOK, WQUEEN, WKING
-from .board import BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING, EMPTY
-
+from .board import EMPTY
+from .board import BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING
 
 def isSquareAttacked(board, x, y, by_white):
     # pawns

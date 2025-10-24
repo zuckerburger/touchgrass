@@ -1,5 +1,7 @@
 from .board import WPAWN, WKNIGHT, WBISHOP, WROOK, WQUEEN, WKING
-from .board import BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING, EMPTY
+from .board import EMPTY
+
+# from .board import BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING
 
 
 def in_bounds(x, y):
