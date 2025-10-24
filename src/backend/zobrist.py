@@ -38,6 +38,7 @@ def hash_turn(hash):
 def hash_piece(hash: int, piece: int, position: Tuple[int, int]):
     if not piece:
         return hash
+    # CONVERT PIECE TO INDEX
     piece = piece + 5 if piece > 0 else piece + 6
     fx, fy = position
     randomNum = zobrist_table["pieces"][piece][fx * 8 + fy]
@@ -46,6 +47,7 @@ def hash_piece(hash: int, piece: int, position: Tuple[int, int]):
 
 def hash_move(hash: int, piece: int, move: Tuple[Tuple[int, int], Tuple[int, int]]):
     position1, position2 = move
+    # HASH TWICE TO REMOVE PIECE FROM POSITION1 AND ADD PIECE TO POSITION2
     return (
         hash ^ hash_piece(hash, piece, position1) ^ hash_piece(hash, piece, position2)
     )
@@ -56,6 +58,7 @@ def hash_castle(hash: int, old: int, new: int):
     if changed_rights == 0:
         return hash
 
+    # HASH ONLY THE CASTLING RIGHTS THAT HAVE CHANGED 
     for i in range(4):
         if changed_rights & (1 << i):
             hash ^= zobrist_table["castling"][i]

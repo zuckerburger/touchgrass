@@ -68,12 +68,14 @@ class Board:
         old_en_passant_file = self.en_passant_file
         self.en_passant_file = None
 
+        # UPDATE CASTLING RIGHTS IF KING/ROOK MOVE
         if original_piece == WKING:
             self.wking_pos = (tx, ty)
             removed_castle_right = WKING_LONG | WKING_SHORT
         elif original_piece == BKING:
             self.bking_pos = (tx, ty)
             removed_castle_right = BKING_LONG | BKING_SHORT
+
         elif original_piece == WROOK and fx == 7:
             removed_castle_right = WKING_LONG if fy == 0 else WKING_SHORT
         elif original_piece == BROOK and fx == 0:

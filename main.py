@@ -1,13 +1,27 @@
 # from src.engine.minmax import MinimaxEngine
+from src.engine.test import TestEngine
 from src.engine.dumbo import DumboEngine
 from src.backend.api import API
 from src.utils import print_board, clear_screen, coords_to_uci
 
 api = API()
-engine = DumboEngine(api)
+engine = TestEngine(api)
 move_number = 1
 
 last_engine_move = None
+
+def prompt_draw():
+    while True:
+        try:
+            choice = input("Threefold repetition detected. Claim draw? (y/n): ")
+            if choice == "y":
+                api.claim_threefold_draw()
+                break
+            if choice == "n":
+                break
+            print("Invalid choice, try again.")
+        except:
+            print("Invalid input, enter a number.")
 
 while not api.get_state()["over"]:
     state = api.get_state()
@@ -19,21 +33,13 @@ while not api.get_state()["over"]:
         print(f"Last Engine Move: {last_engine_move}")
 
     if state["turn"] == "white":
-        if state["result"] == "threefold_draw_claimable":
-            while True:
-                try:
-                    choice = input("Threefold repetition detected. Claim draw? (y/n)\n")
-                    if choice == "y":
-                        api.claim_threefold_draw()
-                        break
-                    if choice == "n":
-                        break
-                    print("Invalid choice, try again.")
-                except:
-                    print("Invalid input, enter a number.")
 
+        # LET PLAYER CLAIM DRAW ON 3RD REPETITION
+        if state["result"] == "threefold_draw_claimable":
+            prompt_draw()
         if api.get_state()["over"]:
             break
+
         moves = api.get_legal_moves()
         for idx, move in enumerate(moves):
             print(f"{idx}: {coords_to_uci(move)}", end="  ")
@@ -47,6 +53,13 @@ while not api.get_state()["over"]:
                 print("Invalid choice, try again.")
             except ValueError:
                 print("Invalid input, enter a number.")
+    
+        # LET PLAYER CLAIM DRAW IMMEDIATELY AFTER 3RD REPETITION
+        if api.get_state()["result"] == "threefold_draw_claimable":
+            prompt_draw()
+        if api.get_state()["over"]:
+            break
+        
     else:
         print("Engine Thinking...", end="", flush=True)
         move = engine.get_best_move()
