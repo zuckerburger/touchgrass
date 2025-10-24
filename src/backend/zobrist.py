@@ -58,7 +58,7 @@ def hash_castle(hash: int, old: int, new: int):
     if changed_rights == 0:
         return hash
 
-    # HASH ONLY THE CASTLING RIGHTS THAT HAVE CHANGED 
+    # HASH ONLY THE CASTLING RIGHTS THAT HAVE CHANGED
     for i in range(4):
         if changed_rights & (1 << i):
             hash ^= zobrist_table["castling"][i]

@@ -10,6 +10,7 @@ move_number = 1
 
 last_engine_move = None
 
+
 def prompt_draw():
     while True:
         try:
@@ -22,6 +23,7 @@ def prompt_draw():
             print("Invalid choice, try again.")
         except:
             print("Invalid input, enter a number.")
+
 
 while not api.get_state()["over"]:
     state = api.get_state()
@@ -53,13 +55,13 @@ while not api.get_state()["over"]:
                 print("Invalid choice, try again.")
             except ValueError:
                 print("Invalid input, enter a number.")
-    
+
         # LET PLAYER CLAIM DRAW IMMEDIATELY AFTER 3RD REPETITION
         if api.get_state()["result"] == "threefold_draw_claimable":
             prompt_draw()
         if api.get_state()["over"]:
             break
-        
+
     else:
         print("Engine Thinking...", end="", flush=True)
         move = engine.get_best_move()
