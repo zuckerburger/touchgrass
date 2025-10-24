@@ -18,6 +18,9 @@ class API:
     def get_legal_moves(self):
         return self.g.legal_moves()
 
+    def claim_threefold_draw(self):
+        return self.g.claim_threefold_draw()
+
     def make_move(self, move):
         return self.g.make_move(move)
 
@@ -26,16 +29,16 @@ class API:
 
     def undo_move(self, move, record):
         return self.g.board.undo_move(move, record)
-    
+
     def undo(self):
         return self.g.undo()
-    
+
     def redo(self):
         return self.g.redo()
-    
+
     def can_undo(self):
         return self.g.can_undo()
-    
+
     def can_redo(self):
         return self.g.can_redo()
 
