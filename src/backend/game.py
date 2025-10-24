@@ -1,9 +1,8 @@
-from collections import defaultdict
 from .board import Board
 from .board import WPAWN, WKNIGHT, WBISHOP, WROOK, WQUEEN, WKING
 from .board import BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING, EMPTY
 from dataclasses import dataclass
-from typing import List, Optional, DefaultDict
+from typing import List, Optional
 import copy
 
 from .move_gen import getLegalMoves, isSquareAttacked
@@ -20,7 +19,6 @@ class GameState:
     game_over: bool
     result: Optional[str]
 
-
 class Game:
     def __init__(self):
         self.board = Board()
@@ -28,24 +26,21 @@ class Game:
         self.game_over = False
         self.result = None
         self.halfmove_clock = 0
-
+        
         self.state_stack = []
         self.redo_stack = []
         self.history = []
-        self.hash_history = defaultdict(int)
 
     def is_check(self, color):
         king_pos = self.board.wking_pos if color == "white" else self.board.bking_pos
         return isSquareAttacked(self.board, *king_pos, by_white=(color == "black"))
+
 
     def get_gamestate(self):
         moves = self.legal_moves()
 
         if self.halfmove_clock >= 100:
             return "draw_fifty_move_rule"
-
-        if self.hash_history[self.board.hash] == 3:
-            return "threefold_draw_claimable"
 
         if moves:
             return "ongoing"
@@ -58,7 +53,7 @@ class Game:
 
     def legal_moves(self):
         return getLegalMoves(self.board, self.turn, self.history)
-
+    
     def save_state(self):
         state = GameState(
             board_state=copy.deepcopy(self.board.board),
@@ -67,10 +62,10 @@ class Game:
             turn=self.turn,
             halfmove_clock=self.halfmove_clock,
             game_over=self.game_over,
-            result=self.result,
+            result=self.result
         )
         return state
-
+    
     def restore_state(self, state):
         self.board.board = copy.deepcopy(state.board_state)
         self.board.wking_pos = state.wking_pos
@@ -90,7 +85,6 @@ class Game:
         self.redo_stack.clear()
 
         record = self.board.apply_move(move)
-        self.hash_history[self.board.hash] += 1
         self.history.append(record)
 
         if record.moved_piece in [WPAWN, BPAWN] or record.captured_piece != EMPTY:
@@ -99,33 +93,25 @@ class Game:
             self.halfmove_clock += 1
 
         state = self.get_gamestate()
-        if state == "ongoing" or state == "threefold_draw_claimable":
-            self.turn = "black" if self.turn == "white" else "white"
-            self.result = None if state == "ongoing" else state
-        else:
+        if state != "ongoing":
             self.game_over = True
             self.result = state
+        else:
+            self.turn = "black" if self.turn == "white" else "white"
 
         return record
-
-    def claim_threefold_draw(self):
-        if self.get_gamestate() == "threefold_draw_claimable":
-            self.game_over = True
-            self.result = "draw_threefold_repetition"
-        return self.game_over
 
     def undo(self):
         if not self.state_stack:
             return False
         current_state = self.save_state()
-        self.hash_history[self.board.hash] -= 1
         self.redo_stack.append(current_state)
         previous_state = self.state_stack.pop()
         self.restore_state(previous_state)
         if self.history:
             self.history.pop()
         return True
-
+    
     def redo(self):
         if not self.redo_stack:
             return False
@@ -133,14 +119,13 @@ class Game:
         self.state_stack.append(current_state)
         next_state = self.redo_stack.pop()
         self.restore_state(next_state)
-        self.hash_history[self.board.hash] += 1
         return True
-
+    
     def can_undo(self):
         return len(self.state_stack) > 0
-
+    
     def can_redo(self):
         return len(self.redo_stack) > 0
-
+    
     def undo_last(self):
         return self.undo()
