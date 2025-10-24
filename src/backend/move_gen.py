@@ -167,9 +167,7 @@ def getLegalMoves(board, color, history):
 
             for nx, ny in getPseudoLegalMoves(board.board, x, y):
                 move = ((x, y), (nx, ny))
-
                 record = board.apply_move(move)
-
                 king_pos = board.wking_pos if color == "white" else board.bking_pos
                 if not isSquareAttacked(board, *king_pos, by_white=(color == "black")):
                     moves.append(move)
@@ -180,7 +178,6 @@ def getLegalMoves(board, color, history):
 
     for move in getEnPassantMoves(board.board, color, history):
         record = board.apply_move(move)
-
         king_pos = board.wking_pos if color == "white" else board.bking_pos
         if not isSquareAttacked(board, *king_pos, by_white=(color == "black")):
             moves.append(move)
