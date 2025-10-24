@@ -1,6 +1,6 @@
 import random
 
-from typing import Tuple, List
+from typing import Optional, Tuple, List
 
 WKING_LONG = 1 << 3
 WKING_SHORT = 1 << 2
@@ -57,3 +57,8 @@ def hash_castle(hash: int, old: int, new: int):
 
 def hash_en_passant(hash: int, rank: int | None):
     return hash if rank == None else hash ^ zobrist_table["en-passant"][rank]
+def hash_promotion(hash: int, piece: int, position: Tuple[int, int], promotion: Optional[int]):
+    if not promotion:
+        return hash
+    return hash ^ hash_piece(hash, piece, position) ^ hash_piece(hash, promotion, position)
+

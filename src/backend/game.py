@@ -67,7 +67,7 @@ class Game:
             turn=self.turn,
             halfmove_clock=self.halfmove_clock,
             game_over=self.game_over,
-            result=self.result,
+            result=self.result
         )
         return state
     

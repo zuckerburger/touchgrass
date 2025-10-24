@@ -7,13 +7,11 @@ from .zobrist import (
     hash_move,
     hash_en_passant,
     hash_castle,
+    hash_promotion,
     hash_turn,
 )
 from .zobrist import WKING_LONG, WKING_SHORT, BKING_LONG, BKING_SHORT, DEFAULT_CASTLING
 
-EMPTY = 0
-WPAWN, WKNIGHT, WBISHOP, WROOK, WQUEEN, WKING = 1, 2, 3, 4, 5, 6
-BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING = -1, -2, -3, -4, -5, -6
 
 
 @dataclass
@@ -25,8 +23,12 @@ class MoveRecord:
     to_sq: Tuple[int, int] = (0, 0)
     en_passant: bool = False
     castling_rights: int = DEFAULT_CASTLING
-    en_passant_file: None | int = None
+    en_passant_file: Optional[int] = None
 
+
+EMPTY = 0
+WPAWN, WKNIGHT, WBISHOP, WROOK, WQUEEN, WKING = 1, 2, 3, 4, 5, 6
+BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING = -1, -2, -3, -4, -5, -6
 
 class Board:
     def __init__(self):
@@ -60,6 +62,7 @@ class Board:
         self.board[tx][ty] = original_piece
         self.board[fx][fy] = EMPTY
         en_passant = False
+
         removed_castle_right = 0
         old_castling_rights = self.castling_rights
         old_en_passant_file = self.en_passant_file
@@ -91,6 +94,7 @@ class Board:
                 captured = self.board[cx][cy]
                 self.board[cx][cy] = EMPTY
                 en_passant = True
+
         # HANDLE CASTLING
         # CHECK IF KING MADE A 2SQR MOVE
         if abs(original_piece) == WKING and abs(fy - ty) == 2:
@@ -125,6 +129,7 @@ class Board:
             (cx, cy),
             old_castling_rights,
             old_en_passant_file,
+            promotion
         )
 
         return MoveRecord(
@@ -188,6 +193,7 @@ class Board:
             (cx, cy),
             old_castling_rights,
             old_en_passant_file,
+            move_record.promotion
         )
 
     def update_hashes(
@@ -198,10 +204,12 @@ class Board:
         captured_position,
         old_castling_rights,
         old_en_passant_file,
+        promotion
     ):
         self.hash = hash_move(self.hash, moved_piece, move)
         self.hash = hash_piece(self.hash, captured_piece, captured_position)
         self.hash = hash_castle(self.hash, old_castling_rights, self.castling_rights)
         self.hash = hash_en_passant(self.hash, old_en_passant_file)
         self.hash = hash_en_passant(self.hash, self.en_passant_file)
+        self.hash = hash_promotion(self.hash, moved_piece, move[1], promotion)
         self.hash = hash_turn(self.hash)
