@@ -23,10 +23,10 @@ while not api.get_state()["over"]:
             while True:
                 try:
                     choice = input("Threefold repetition detected. Claim draw? (y/n)\n")
-                    if choice == 'y':
+                    if choice == "y":
                         api.claim_threefold_draw()
                         break
-                    if choice == 'n':
+                    if choice == "n":
                         break
                     print("Invalid choice, try again.")
                 except:

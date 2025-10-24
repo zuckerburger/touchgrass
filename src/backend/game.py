@@ -20,6 +20,7 @@ class GameState:
     game_over: bool
     result: Optional[str]
 
+
 class Game:
     def __init__(self):
         self.board = Board()
@@ -27,7 +28,7 @@ class Game:
         self.game_over = False
         self.result = None
         self.halfmove_clock = 0
-        
+
         self.state_stack = []
         self.redo_stack = []
         self.history = []
@@ -36,7 +37,6 @@ class Game:
     def is_check(self, color):
         king_pos = self.board.wking_pos if color == "white" else self.board.bking_pos
         return isSquareAttacked(self.board, *king_pos, by_white=(color == "black"))
-
 
     def get_gamestate(self):
         moves = self.legal_moves()
@@ -58,7 +58,7 @@ class Game:
 
     def legal_moves(self):
         return getLegalMoves(self.board, self.turn, self.history)
-    
+
     def save_state(self):
         state = GameState(
             board_state=copy.deepcopy(self.board.board),
@@ -67,10 +67,10 @@ class Game:
             turn=self.turn,
             halfmove_clock=self.halfmove_clock,
             game_over=self.game_over,
-            result=self.result
+            result=self.result,
         )
         return state
-    
+
     def restore_state(self, state):
         self.board.board = copy.deepcopy(state.board_state)
         self.board.wking_pos = state.wking_pos
@@ -107,7 +107,7 @@ class Game:
             self.result = state
 
         return record
-    
+
     def claim_threefold_draw(self):
         if self.get_gamestate() == "threefold_draw_claimable":
             self.game_over = True
@@ -125,7 +125,7 @@ class Game:
         if self.history:
             self.history.pop()
         return True
-    
+
     def redo(self):
         if not self.redo_stack:
             return False
@@ -135,12 +135,12 @@ class Game:
         self.restore_state(next_state)
         self.hash_history[self.board.hash] += 1
         return True
-    
+
     def can_undo(self):
         return len(self.state_stack) > 0
-    
+
     def can_redo(self):
         return len(self.redo_stack) > 0
-    
+
     def undo_last(self):
         return self.undo()

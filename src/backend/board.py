@@ -13,7 +13,6 @@ from .zobrist import (
 from .zobrist import WKING_LONG, WKING_SHORT, BKING_LONG, BKING_SHORT, DEFAULT_CASTLING
 
 
-
 @dataclass
 class MoveRecord:
     moved_piece: int
@@ -29,6 +28,7 @@ class MoveRecord:
 EMPTY = 0
 WPAWN, WKNIGHT, WBISHOP, WROOK, WQUEEN, WKING = 1, 2, 3, 4, 5, 6
 BPAWN, BKNIGHT, BBISHOP, BROOK, BQUEEN, BKING = -1, -2, -3, -4, -5, -6
+
 
 class Board:
     def __init__(self):
@@ -81,9 +81,8 @@ class Board:
 
         # CHECK IF PSEUDO-LEGAL EN PASSANT CAPTURE EXISTS FOR NEXT TURN
         elif abs(original_piece) == WPAWN and abs(tx - fx) == 2:
-            if (
-                (ty <= 6 and self.board[tx][ty + 1] == -original_piece)
-                or (ty >= 1 and self.board[tx][ty - 1] == -original_piece)
+            if (ty <= 6 and self.board[tx][ty + 1] == -original_piece) or (
+                ty >= 1 and self.board[tx][ty - 1] == -original_piece
             ):
                 self.en_passant_file = fy
 
@@ -129,7 +128,7 @@ class Board:
             (cx, cy),
             old_castling_rights,
             old_en_passant_file,
-            promotion
+            promotion,
         )
 
         return MoveRecord(
@@ -193,7 +192,7 @@ class Board:
             (cx, cy),
             old_castling_rights,
             old_en_passant_file,
-            move_record.promotion
+            move_record.promotion,
         )
 
     def update_hashes(
@@ -204,7 +203,7 @@ class Board:
         captured_position,
         old_castling_rights,
         old_en_passant_file,
-        promotion
+        promotion,
     ):
         self.hash = hash_move(self.hash, moved_piece, move)
         self.hash = hash_piece(self.hash, captured_piece, captured_position)
