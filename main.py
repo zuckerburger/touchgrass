@@ -1,5 +1,5 @@
 # from src.engine.minmax import MinimaxEngine
-from src.engine.dumbo import DumboEngine 
+from src.engine.dumbo import DumboEngine
 from src.backend.api import API
 from src.utils import print_board, clear_screen, coords_to_uci
 
