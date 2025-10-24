@@ -1,11 +1,10 @@
 # from src.engine.minmax import MinimaxEngine
-from src.engine.test import TestEngine
-from src.engine.dumbo import DumboEngine
+from src.engine.dumbo import DumboEngine 
 from src.backend.api import API
 from src.utils import print_board, clear_screen, coords_to_uci
 
 api = API()
-engine = TestEngine(api)
+engine = DumboEngine(api)
 move_number = 1
 
 last_engine_move = None
